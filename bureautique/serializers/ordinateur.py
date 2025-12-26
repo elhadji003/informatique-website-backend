@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from ..models import Cours, Etape, TypeObjet, ProgressionUtilisateur, PartiePrincipale, Utilite
+from .quizz import QuizzSerializer
 
 # Serializers de base
 class TypeObjetSerializer(serializers.ModelSerializer):
@@ -36,7 +37,7 @@ class EtapeSerializer(serializers.ModelSerializer):
 class ProgressionUtilisateurSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProgressionUtilisateur
-        fields = ['user', 'cours', 'is_started']
+        fields = ['cours', 'is_started', "is_finished", 'date']
 
 class CoursSerializer(serializers.ModelSerializer):
     etapes = EtapeSerializer(many=True, read_only=True)
@@ -44,11 +45,11 @@ class CoursSerializer(serializers.ModelSerializer):
     liked_by_user = serializers.SerializerMethodField()
     progress_user = serializers.SerializerMethodField()
     users_started_count = serializers.SerializerMethodField()
-
+    quizz = QuizzSerializer(many=True, read_only=True)
 
     class Meta:
         model = Cours
-        fields = ['id', 'titre', 'description', 'etapes', 'likes_count', 'liked_by_user', 'progress_user', 'users_started_count']
+        fields = ['id', 'titre', 'description', 'etapes', 'quizz', 'likes_count', 'liked_by_user', 'progress_user', 'users_started_count']
     
     def get_liked_by_user(self, obj):
         user = self.context.get('request').user
@@ -67,3 +68,35 @@ class CoursSerializer(serializers.ModelSerializer):
         return None
 
 
+class ListeCoursSerializers(serializers.ModelSerializer):
+    progress_user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Cours
+        fields = ['id', 'titre', 'progress_user']
+
+    def get_progress_user(self, obj):
+        request = self.context.get('request')
+        user = request.user if request else None
+
+        if not user or not user.is_authenticated:
+            return {
+                "is_started": False,
+                "is_finished": False,
+            }
+
+        progression = ProgressionUtilisateur.objects.filter(
+            user=user,
+            cours=obj
+        ).first()
+
+        if not progression:
+            return {
+                "is_started": False,
+                "is_finished": False,
+            }
+
+        return {
+            "is_started": progression.is_started,
+            "is_finished": progression.is_finished,
+        }

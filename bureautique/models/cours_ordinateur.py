@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
 
 
 # Le cours principal
@@ -7,11 +8,17 @@ class Cours(models.Model):
     titre = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
 
+
     # Nouveau : likes et suivi user
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_cours", blank=True)
     
     def total_likes(self):
         return self.likes.count()
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.titre)
+        super().save(*args, **kwargs)
 
 
     def __str__(self):
@@ -56,8 +63,11 @@ class Utilite(models.Model):
 class ProgressionUtilisateur(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="progress"
+
     )
     cours = models.ForeignKey(Cours, on_delete=models.CASCADE)
     is_started = models.BooleanField(default=False)
+    is_finished = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)

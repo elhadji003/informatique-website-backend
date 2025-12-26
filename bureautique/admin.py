@@ -1,6 +1,7 @@
 # cours/admin.py
 from django.contrib import admin
 from .models import Cours, Etape, TypeObjet, PartiePrincipale, Utilite, ProgressionUtilisateur
+from .models.quizz import Quizz, Question, Option
 
 # 🔹 Inline pour les types d’objets, parties principales et utilités
 class TypeObjetInline(admin.TabularInline):
@@ -55,3 +56,26 @@ class PartiePrincipaleAdmin(admin.ModelAdmin):
 class UtiliteAdmin(admin.ModelAdmin):
     list_display = ('texte', 'etape')
     search_fields = ('texte',)
+
+class OptionInline(admin.TabularInline):
+    model = Option
+    extra = 1  # nombre de lignes vides par défaut
+
+class QuestionInline(admin.TabularInline):
+    model = Question
+    extra = 1
+
+@admin.register(Quizz)
+class QuizzAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'cours', 'nombre_questions')
+    search_fields = ('titre', 'cours__titre')
+    list_filter = ('cours',)
+    inlines = [QuestionInline]
+
+    def nombre_questions(self, obj):
+        return obj.questions.count()
+    nombre_questions.short_description = "Nombre de questions"
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('texte', 'quizz', 'ordre')
+    inlines = [OptionInline]
