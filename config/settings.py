@@ -197,10 +197,10 @@ else:
     
     
 # Paydunya
-PAYDUNYA_MASTER_KEY = "eDOJAzLc-T6Nf-NOrp-LvXl-xQGz6E9uNSt0"
-PAYDUNYA_PUBLIC_KEY = "test_public_Ho4gX6JTKRQsGfyAL3pZGEc3vCP"
-PAYDUNYA_PRIVATE_KEY = "test_private_IM1PczvfhPwHL0ySEuDLeZRy75W"
-PAYDUNYA_TOKEN = "ZNQhpnCYaeXUEXVeHIk5"
+PAYDUNYA_MASTER_KEY = os.getenv("PAYDUNYA_MASTER_KEY")
+PAYDUNYA_PUBLIC_KEY = os.getenv("PAYDUNYA_PUBLIC_KEY")
+PAYDUNYA_PRIVATE_KEY = os.getenv("PAYDUNYA_PRIVATE_KEY")
+PAYDUNYA_TOKEN =   os.getenv("PAYDUNYA_TOKEN")
 
 # Ajoute ceci pour gérer l'URL automatiquement
 PAYDUNYA_MODE = "test"  # Change en "live" quand ton KYC sera validé
