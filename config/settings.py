@@ -16,6 +16,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     "localhost", 
     "127.0.0.1",
+    "informatique-website.vercel.app"
     "informatique-website-backend.onrender.com",
     ".onrender.com",
 ]
