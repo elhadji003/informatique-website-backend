@@ -11,18 +11,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 dotenv.load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-# DEBUG = os.getenv('DEBUG', 'False') == 'True'
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+# DEBUG = True
 ALLOWED_HOSTS = [
     "localhost", 
     "127.0.0.1",
+    "192.168.1.8",
 ]
 
 # === CORS === (CORRIGÉ)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
-
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Seulement en debug
 
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # ---- Apps -----
     "users",
     "bureautique",
+    "payments",
 ]
 
 MIDDLEWARE = [
@@ -193,3 +194,18 @@ if os.getenv("DJANGO_ENV") == "prod":
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     DEFAULT_FROM_EMAIL = "dev@localhost"
+    
+    
+# Paydunya
+PAYDUNYA_MASTER_KEY = "eDOJAzLc-T6Nf-NOrp-LvXl-xQGz6E9uNSt0"
+PAYDUNYA_PUBLIC_KEY = "test_public_Ho4gX6JTKRQsGfyAL3pZGEc3vCP"
+PAYDUNYA_PRIVATE_KEY = "test_private_IM1PczvfhPwHL0ySEuDLeZRy75W"
+PAYDUNYA_TOKEN = "ZNQhpnCYaeXUEXVeHIk5"
+
+# Ajoute ceci pour gérer l'URL automatiquement
+PAYDUNYA_MODE = "test"  # Change en "live" quand ton KYC sera validé
+
+if PAYDUNYA_MODE == "test":
+    PAYDUNYA_BASE_URL = "https://app.paydunya.com/sandbox-api/v1/checkout-invoice/create"
+else:
+    PAYDUNYA_BASE_URL = "https://app.paydunya.com/api/v1/checkout-invoice/create"
