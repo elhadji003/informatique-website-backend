@@ -16,12 +16,14 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     "localhost", 
     "127.0.0.1",
-    "192.168.1.8",
+    "informatique-website-backend.onrender.com",
+    ".onrender.com",
 ]
 
 # === CORS === (CORRIGÉ)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Seulement en debug
